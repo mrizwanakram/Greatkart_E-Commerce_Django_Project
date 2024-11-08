@@ -14,7 +14,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from carts.views import _cart_id
 from carts.models import Cart, CartItem
-
+import requests
 
 def register(request):
     if request.method == 'POST':
@@ -104,7 +104,15 @@ def login(request):
                 pass
             auth.login(request, user)
             messages.success(request, 'Login successful')
-            return redirect('dashboard')
+            url = request.META.get('HTTP_REFERER')
+            try:
+                query = request.utils.urlparse(url).query
+                params = dict(x.split('=') for x in query.split('&'))
+                if 'next' in params:
+                    nextPage = params['next']
+                    return redirect(nextPage)
+            except:
+                    return redirect('dashboard')
         else:
             messages.error(request, 'Invalid credentials')
             return redirect('login')
