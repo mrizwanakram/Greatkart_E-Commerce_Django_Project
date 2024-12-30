@@ -4,14 +4,6 @@ from .models import Cart, CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-from django.http import HttpResponse
-
-def _cart_id(request):
-    cart = request.session.session_key
-    if not cart:
-        cart = request.session.create()
-    return cart
 
 def add_cart(request, product_id):
     current_user = request.user
